@@ -1,42 +1,75 @@
 const { response } = require('express');
+const bcryptjs = require('bcryptjs');
 
-const getUsuarios = (req = request, res = response) => {
+const Usuario = require('../model/user');
+const { Promise } = require('mongoose');
 
-    const {limit = 10, q = 'no name'} = req.query;
+const getUsuarios = async (req = request, res = response) => {
+
+    const { limit = 5, desde = 0, q = 'no name' } = req.query;
+    const query = { state: true };
+
+    const [total, usuarios] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query)
+            .limit(Number(limit))
+            .skip(Number(desde))
+    ]);
 
     res.json({
-        id: 1,
-        limit,
-        q
+        total,
+        usuarios
     });
 }
 
-const postUsuario = (req, res = response) => {
+const postUsuario = async (req, res = response) => {
 
-    const {edad, nombre} = req.body;
+    const { nombre, email, password, rol } = req.body;
+    const usuario = new Usuario({ nombre, email, password, rol });
+
+    //Encriptar password
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync(password, salt);
+
+    //Save en DB
+    await usuario.save();
+
+    return res.json({
+        usuario
+    });
+
+}
+
+const putUsuario = async (req, res = response) => {
+
+    const { id } = req.params;
+    const { _id, password, google, email, ...resto } = req.body;
+
+    if (password) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
     res.json({
-        id: 1,
-        msg: 'post API - controlador usuarios',
-        edad,
-        nombre,
+        msg: 'put API - controlador usuarios',
+        usuario
     });
 }
 
-const putUsuario = (req, res = response) => {
+const deleteUsuario = async(req, res = response) => {
+    const { id } = req.params;
 
-    const id = req.params.id;
+    //Borrado fisico
+    //const usuario = await Usuario.findByIdAndDelete(id);
+    
+    //Borrado Logico, actualizar el campo difinido para tal fin, ejemplo: estado: false, deleted: true, etc...
+    const usuario = await Usuario.findByIdAndUpdate(id, {state: false});
 
     res.json({
         id,
-        msg: 'put API - controlador usuarios',
-
-    });
-}
-
-const deleteUsuario = (req, res = response) => {
-    res.json({
-        id: 1,
+        usuario,
         msg: 'delete API - controlador usuarios'
     });
 }
