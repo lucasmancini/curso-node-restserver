@@ -8,6 +8,7 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
         this.userRoutesPath = '/api/users';
+        this.authPath = '/api/auth';
 
         //Conectar a DB
         this.conectarDb();
@@ -36,7 +37,11 @@ class Server {
 
     routes() {
         //.... todas las rutas que le siguen a la carpta public/index.html o index dentr de public y demas rutas
-        this.app.use( this.userRoutesPath, require('../routes/users'))
+        
+        this.app.use( this.authPath, require('../routes/auth'));
+        
+        this.app.use( this.userRoutesPath, require('../routes/users'));
+        
     }
 
     listen() {

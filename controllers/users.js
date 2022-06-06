@@ -60,17 +60,15 @@ const putUsuario = async (req, res = response) => {
 
 const deleteUsuario = async(req, res = response) => {
     const { id } = req.params;
-
-    //Borrado fisico
-    //const usuario = await Usuario.findByIdAndDelete(id);
     
     //Borrado Logico, actualizar el campo difinido para tal fin, ejemplo: estado: false, deleted: true, etc...
     const usuario = await Usuario.findByIdAndUpdate(id, {state: false});
 
+    const usuarioAutenticado = await req.usuario;
+
+//        usuarioAutenticado,
     res.json({
-        id,
         usuario,
-        msg: 'delete API - controlador usuarios'
     });
 }
 

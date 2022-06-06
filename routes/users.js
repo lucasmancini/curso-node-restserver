@@ -9,9 +9,16 @@ const {
     deleteUsuario
 } = require('../controllers/users');
 
-const { isValidRole, isAlreadyEmailExist, userNotExist } = require('../helpers/db-validators');
+const { isValidRole,
+    isAlreadyEmailExist,
+    userNotExist
+} = require('../helpers/db-validators');
 
-const { validarCampos } = require('../middlewares/validar-campos');
+const {
+    validarCampos,
+    validarJWT,
+    hasRole
+} = require('../middlewares');
 
 const router = new Router();
 
@@ -27,13 +34,16 @@ router.post('/', [
 ], postUsuario);
 
 router.put('/:id', [
-    check('id', 'No es un ID valido').isMongoId().custom( userNotExist ),
+    check('id', 'No es un ID valido').isMongoId().custom(userNotExist),
     validarCampos
 ], putUsuario);
 
 router.delete('/:id', [
-    check('id', 'No es un ID valido').isMongoId().custom( userNotExist ),
+    validarJWT,
+    //esAdminRole,
+    hasRole('ADMIN_ROLE', 'VENTAS_ROLE', 'OTRO_ROLE', 'ETC_ROLE'),
+    check('id', 'No es un ID valido').isMongoId().custom(userNotExist),
     validarCampos
-],deleteUsuario);
+], deleteUsuario);
 
 module.exports = router;

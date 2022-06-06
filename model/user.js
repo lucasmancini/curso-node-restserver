@@ -38,7 +38,9 @@ UsuarioSchema.methods.toJSON = function() {
     //saco los valores que no quiero que devuelva cuando 
     // se consulta el objeto (__v, password)
     //unifico todos los otros atributos en la variable usuario.
-    const { __v, password, ...usuario} = this.toObject();    
+    const { __v, _id, password, ...usuario} = this.toObject();
+    usuario.uid = _id;
+
     return usuario;
 }
 
