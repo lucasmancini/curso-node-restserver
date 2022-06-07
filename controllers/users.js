@@ -1,7 +1,7 @@
 const { response } = require('express');
 const bcryptjs = require('bcryptjs');
 
-const Usuario = require('../model/user');
+const Usuario = require('../model/usuario');
 const { Promise } = require('mongoose');
 
 const getUsuarios = async (req = request, res = response) => {
@@ -10,7 +10,9 @@ const getUsuarios = async (req = request, res = response) => {
     const query = { state: true };
 
     const [total, usuarios] = await Promise.all([
-        Usuario.countDocuments(query),
+        Usuario.countDocuments(query)
+            .limit(Number(limit))
+            .skip(Number(desde)),
         Usuario.find(query)
             .limit(Number(limit))
             .skip(Number(desde))
@@ -58,15 +60,15 @@ const putUsuario = async (req, res = response) => {
     });
 }
 
-const deleteUsuario = async(req, res = response) => {
+const deleteUsuario = async (req, res = response) => {
     const { id } = req.params;
-    
+
     //Borrado Logico, actualizar el campo difinido para tal fin, ejemplo: estado: false, deleted: true, etc...
-    const usuario = await Usuario.findByIdAndUpdate(id, {state: false});
+    const usuario = await Usuario.findByIdAndUpdate(id, { state: false });
 
     const usuarioAutenticado = await req.usuario;
 
-//        usuarioAutenticado,
+    //        usuarioAutenticado,
     res.json({
         usuario,
     });

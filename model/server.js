@@ -7,8 +7,15 @@ class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.userRoutesPath = '/api/users';
-        this.authPath = '/api/auth';
+
+
+        this.paths = {
+            auth: '/api/auth',
+            category: '/api/category',
+            product: '/api/product',
+            user: '/api/users',
+            search: '/api/search',
+        }
 
         //Conectar a DB
         this.conectarDb();
@@ -20,7 +27,7 @@ class Server {
         this.routes();
     }
 
-    async conectarDb(){
+    async conectarDb() {
         await dbConnection();
     }
 
@@ -29,7 +36,7 @@ class Server {
         this.app.use(cors());
 
         // Lectura y Parseo del body
-        this.app.use( express.json() ); 
+        this.app.use(express.json());
 
         //Public directory (tiliza esta carpeta publica antes de cualquier ruta)
         this.app.use(express.static('public'));
@@ -37,11 +44,12 @@ class Server {
 
     routes() {
         //.... todas las rutas que le siguen a la carpta public/index.html o index dentr de public y demas rutas
-        
-        this.app.use( this.authPath, require('../routes/auth'));
-        
-        this.app.use( this.userRoutesPath, require('../routes/users'));
-        
+
+        this.app.use(this.paths.auth, require('../routes/auth'));
+        this.app.use(this.paths.category, require('../routes/category'));
+        this.app.use(this.paths.user, require('../routes/users'));
+        this.app.use(this.paths.product, require('../routes/product'));
+        this.app.use(this.paths.search, require('../routes/search'));
     }
 
     listen() {

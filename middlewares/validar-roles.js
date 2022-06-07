@@ -17,7 +17,7 @@ const esAdminRole = (req, res = response, next) => {
     if (rol !== 'ADMIN_ROLE') {
 
         return res.status(401).json({
-            msg: `User ${nombre} no es ADMIN`
+            msg: `Usuario ${nombre} no es ADMIN`
         })
 
     }
@@ -39,7 +39,7 @@ const hasRole = (...roles) => {
 
         if (!roles.includes(req.usuario.rol)) {
             return res.status(401).json({
-                msg: `El User ${req.usuario.nombre} require uno de estos roles ${roles}`
+                msg: `El Usuaruio ${req.usuario.nombre} require uno de estos roles ${roles}`
             })          
         }
 //        console.log(roles, req.usuario.rol)
