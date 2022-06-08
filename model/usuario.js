@@ -22,7 +22,7 @@ const UsuarioSchema = Schema({
         type: String,
         required: false,
         default: "USER_ROLE",
-        enum: ['USER_ROLE', 'SUPER_ROLE']
+        enum: ['ADMIN_ROLE', 'USER_ROLE', 'SUPER_ROLE']
     },
     state: {
         type: Boolean,

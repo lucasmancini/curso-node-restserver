@@ -28,6 +28,7 @@ const ProductSchema = Schema({
         ref: 'Usuario',
         required: true
     },
+    img: { type: String }
 });
 
 ProductSchema.methods.toJSON = function () {
