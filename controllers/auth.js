@@ -32,6 +32,7 @@ const login = async (req, res = response) => {
                 msg: 'Usuario / Password incorrectos - password incorrecto'
             })
         }
+
         //Generate JWT
         const token = await generarJWT(usuario.id);
 
@@ -58,11 +59,11 @@ const googleSignIn = async (req, res = response,) => {
 
     try {
 
-        const {nombre, img, email} = await googleVerify(id_token);
+        const { nombre, img, email } = await googleVerify(id_token);
 
         //Verificar si existe el correo 
-        let usuario = await Usuario.findOne({email});
-        
+        let usuario = await Usuario.findOne({ email });
+
 
         if (!usuario) {
             //Crear usuario
@@ -81,10 +82,10 @@ const googleSignIn = async (req, res = response,) => {
         //Si el usuario existe en DB
         if (!usuario.state) {
             return res.status(401).json({
-                    msg: 'Usuario bloqueado, hable con el admin'
+                msg: 'Usuario bloqueado, hable con el admin'
             });
         }
-        
+
         //Generar el JWT
         const token = await generarJWT(usuario.id)
 
@@ -92,22 +93,32 @@ const googleSignIn = async (req, res = response,) => {
             usuario,
             token
         });
-    
+
     } catch (error) {
-        
+
         res.status(400).json({
-            ok:false,
+            ok: false,
             msg: 'El Token no se pudo verificar'
         })
-        
+
     }
+}
 
+const refreshToken = async (req, res = response) =>{
 
-
-
+    const {usuario} = req;
+    
+    //Generate JWT
+    const token = await generarJWT(usuario.id);
+    
+    res.json({
+        usuario,
+        token
+    });
 }
 
 module.exports = {
     login,
-    googleSignIn
+    googleSignIn,
+    refreshToken
 }
